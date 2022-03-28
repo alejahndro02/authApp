@@ -10,16 +10,17 @@ import { FormBuilder,
   ]
 })
 export class LoginComponent {
-  miFormulario:FormGroup=this.fb.group({
-    email   :['', Validators.required, Validators.email],
-    password:['', Validators.required, Validators.minLength(6)]
+  // Se crea la referencia al formulario 
+  loginForm :FormGroup =  this.fb.group({
+    email   :['', [Validators.required, Validators.email]],
+    password:['', [Validators.required, Validators.minLength(6)]]
   })
 
   constructor(private fb: FormBuilder) { }
 
   login(){
-    console.log(this.miFormulario.valid);
-    console.log(this.miFormulario.value);
+    console.log(this.loginForm.valid);
+    console.log(this.loginForm.value);
     
     
   }
