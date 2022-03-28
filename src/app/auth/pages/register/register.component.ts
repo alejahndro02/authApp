@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, 
+         OnInit       } from '@angular/core';
+import { FormBuilder, 
+         FormGroup, 
+         Validators   } from '@angular/forms';
+import { Router       } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -13,18 +17,12 @@ export class RegisterComponent implements OnInit {
     email   : ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   })
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder,private router: Router) { }
 
   ngOnInit(): void {
   }
   registro(){
-    console.log(this.registerForm.valid);
-    console.log(this.registerForm.value);
-    console.log('registrado');
-    
+    this.router.navigateByUrl('/auth')
   }
-  
-  
-  
   
 }
