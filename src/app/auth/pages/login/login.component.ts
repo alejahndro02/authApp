@@ -3,6 +3,7 @@ import { FormBuilder,
          FormGroup, 
          Validators   } from '@angular/forms';
 import { Router       } from '@angular/router';
+import   Swal           from 'sweetalert2';
 import { AuthService  } from '../../services/auth.service';
 
 @Component({
@@ -28,11 +29,11 @@ export class LoginComponent {
     this.authService.login(email,password)
     .subscribe( valido => {
       console.log(valido );
-      if(valido){
+      if(valido===true){
         this.router.navigateByUrl('/dashboard')
       }else{
         console.log('error');
-        
+        Swal.fire('Error', valido, 'error')
       }
     })
 
