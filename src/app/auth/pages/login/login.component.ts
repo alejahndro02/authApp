@@ -14,8 +14,8 @@ import { AuthService  } from '../../services/auth.service';
 export class LoginComponent {
   // Se crea la referencia al formulario 
   loginForm :FormGroup =  this.fb.group({
-    email   :['', [Validators.required, Validators.email]],
-    password:['', [Validators.required, Validators.minLength(6)]]
+    email   :['qtzim@gmail.com', [Validators.required, Validators.email]],
+    password:['1233456', [Validators.required, Validators.minLength(6)]]
   })
 
   constructor(private fb: FormBuilder, 
@@ -26,11 +26,15 @@ export class LoginComponent {
     console.log(this.loginForm.value);
     const {email, password} = this.loginForm.value
     this.authService.login(email,password)
-    .subscribe( resp => {
-      console.log(resp);
-      
+    .subscribe( valido => {
+      console.log(valido );
+      if(valido){
+        this.router.navigateByUrl('/dashboard')
+      }else{
+        console.log('error');
+        
+      }
     })
 
-    // this.router.navigateByUrl('/dashboard')
   }
 }
