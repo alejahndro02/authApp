@@ -1,46 +1,54 @@
-import { HttpClient   } from '@angular/common/http';
-import { Injectable   } from '@angular/core';
-import { catchError, 
-         map, 
-         of, 
-         tap          } from 'rxjs';
+import { HttpClient, 
+         HttpHeaders } from '@angular/common/http';
+import { Injectable  } from '@angular/core';
+import { catchError,
+         map,
+         of,
+         tap         } from 'rxjs';
 
-import { environment  } from 'src/environments/environment';
-import { AuthResponse, 
-         Usuario      } from '../interfaces/auth';
+import { environment } from 'src/environments/environment';
+import { AuthResponse,
+         Usuario     } from '../interfaces/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private dbUrlApi: string= environment.dbUrl
-  private _usuario!:Usuario; 
+  private dbUrlApi: string = environment.dbUrl
+  private _usuario!: Usuario;
 
-  get usuario(){
-    return {...this._usuario}
+  get usuario() {
+    return { ...this._usuario }
   }
 
   constructor(private http: HttpClient) { }
 
-  login(email:string, password:string){
+  login(email: string, password: string) {
 
-    const urlApp=`${this.dbUrlApi}/auth`
-    const body = {email, password} 
-    
+    const urlApp = `${this.dbUrlApi}/auth`
+    const body = { email, password }
+
     return this.http.post<AuthResponse>(urlApp, body)
-    .pipe(
-      tap(response=>{
-        console.log(response)
-        if(response.ok){
-          this._usuario={
-            name:response.nameUser!,
-            uid:response.uid!
+      .pipe(
+        tap(response => {
+          // Se crea el localStorage para almacenar el token
+          localStorage.setItem('token', response.token!)
+          if (response.ok) {
+            this._usuario = {
+              name: response.nameUser!,
+              uid: response.uid!
+            }
           }
-        }
-      }),
-      map(res => res.ok),
-      catchError(err => of(err.error.msg))
-    )
+        }),
+        map(res => res.ok),
+        catchError(err => of(err.error.msg))
+      )
+  }
+  validarToken() {
+    const urlApp = `${this.dbUrlApi}/auth/newToken`
+    const headers = new HttpHeaders().set('x-token', localStorage.getItem('token') || '')
+      // Se hace una peticion http, pasandole la url y los headers
+    return this.http.get(urlApp, {headers}) 
   }
 }
