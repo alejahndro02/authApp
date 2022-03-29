@@ -3,6 +3,7 @@ import { HttpClient,
 import { Injectable  } from '@angular/core';
 import { catchError,
          map,
+         Observable,
          of,
          tap         } from 'rxjs';
 
@@ -32,9 +33,9 @@ export class AuthService {
     return this.http.post<AuthResponse>(urlApp, body)
       .pipe(
         tap(response => {
-          // Se crea el localStorage para almacenar el token
-          localStorage.setItem('token', response.token!)
           if (response.ok) {
+            // Se crea el localStorage para almacenar el token
+            localStorage.setItem('token', response.token!)
             this._usuario = {
               name: response.nameUser!,
               uid: response.uid!
@@ -45,10 +46,21 @@ export class AuthService {
         catchError(err => of(err.error.msg))
       )
   }
-  validarToken() {
+  validarToken():Observable<boolean> {
     const urlApp = `${this.dbUrlApi}/auth/newToken`
     const headers = new HttpHeaders().set('x-token', localStorage.getItem('token') || '')
       // Se hace una peticion http, pasandole la url y los headers
-    return this.http.get(urlApp, {headers}) 
+    return this.http.get<AuthResponse>(urlApp, {headers})
+      .pipe (
+        map(resp=>{
+         localStorage.setItem('token', resp.token!)
+         this._usuario = {
+           name: resp.nameUser!,
+           uid: resp.uid!
+         }
+          return resp.ok
+        }),
+        catchError(err => of(false))
+      )
   }
 }
