@@ -25,6 +25,27 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
+  registro(nameUser:string, email:string, password:string){
+
+    const urlApp = `${this.dbUrlApi}/auth/new`
+    const body = { nameUser,email, password }
+    return this.http.post<AuthResponse>(urlApp, body )
+      .pipe(
+        tap(response => {
+          if (response.ok) {
+            // Se crea el localStorage para almacenar el token
+            localStorage.setItem('token', response.token!)
+            this._usuario = {
+              nameUser: response.nameUser!,
+              uid: response.uid!
+            }
+          }
+      }),
+      map(res => res.ok),
+      catchError(err => of(err.error.msg))
+    )
+  }
+
   login(email: string, password: string) {
 
     const urlApp = `${this.dbUrlApi}/auth`
@@ -37,7 +58,7 @@ export class AuthService {
             // Se crea el localStorage para almacenar el token
             localStorage.setItem('token', response.token!)
             this._usuario = {
-              name: response.nameUser!,
+              nameUser: response.nameUser!,
               uid: response.uid!
             }
           }
@@ -55,12 +76,18 @@ export class AuthService {
         map(resp=>{
          localStorage.setItem('token', resp.token!)
          this._usuario = {
-           name: resp.nameUser!,
+           nameUser: resp.nameUser!,
            uid: resp.uid!
          }
           return resp.ok
         }),
         catchError(err => of(false))
       )
+  }
+  logOut(){
+    // Si se desea borrar solo el token 
+    // localStorage.removeItem('token')
+    // Borra todo 
+    localStorage.clear();
   }
 }
