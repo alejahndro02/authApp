@@ -7,5 +7,5 @@ export interface AuthResponse{
 }
 export interface Usuario{
     uid:string;
-    name:string;
+    nameUser:string;
 }
