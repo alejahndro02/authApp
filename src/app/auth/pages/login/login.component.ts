@@ -24,15 +24,12 @@ export class LoginComponent {
               private authService: AuthService) { }
 
   login(){
-    console.log(this.loginForm.value);
     const {email, password} = this.loginForm.value
     this.authService.login(email,password)
     .subscribe( valido => {
-      console.log(valido );
       if(valido===true){
         this.router.navigateByUrl('/dashboard')
       }else{
-        console.log('error');
         Swal.fire('Error', valido, 'error')
       }
     })
