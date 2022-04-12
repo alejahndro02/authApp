@@ -31,14 +31,10 @@ export class AuthService {
     const body = { nameUser,email, password }
     return this.http.post<AuthResponse>(urlApp, body )
       .pipe(
-        tap(response => {
-          if (response.ok) {
+        tap(({ok,token}) => {
+          if (ok) {
             // Se crea el localStorage para almacenar el token
-            localStorage.setItem('token', response.token!)
-            this._usuario = {
-              nameUser: response.nameUser!,
-              uid: response.uid!
-            }
+            localStorage.setItem('token', token!)
           }
       }),
       map(res => res.ok),
@@ -57,10 +53,6 @@ export class AuthService {
           if (response.ok) {
             // Se crea el localStorage para almacenar el token
             localStorage.setItem('token', response.token!)
-            this._usuario = {
-              nameUser: response.nameUser!,
-              uid: response.uid!
-            }
           }
         }),
         map(res => res.ok),
@@ -77,7 +69,8 @@ export class AuthService {
          localStorage.setItem('token', resp.token!)
          this._usuario = {
            nameUser: resp.nameUser!,
-           uid: resp.uid!
+           uid: resp.uid!,
+           email: resp.email!
          }
           return resp.ok
         }),
